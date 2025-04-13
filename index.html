@@ -13,7 +13,60 @@
         <label for="importSource">Import games from JSON:</label>
         <input type="file" id="importSource" accept=".json">
     </div>
-    
+
+    <div class="add-game-container">
+        <h2>Add New Game</h2>
+        <form id="add-game-form">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" required>
+            </div>
+            <div class="form-group">
+                <label for="designer">Designer:</label>
+                <input type="text" id="designer" required>
+            </div>
+            <div class="form-group">
+                <label for="artist">Artist:</label>
+                <input type="text" id="artist" required>
+            </div>
+            <div class="form-group">
+                <label for="publisher">Publisher:</label>
+                <input type="text" id="publisher" required>
+            </div>
+            <div class="form-group">
+                <label for="year">Year:</label>
+                <input type="number" id="year" required>
+            </div>
+            <div class="form-group">
+                <label for="players">Players:</label>
+                <input type="text" id="players" required>
+            </div>
+            <div class="form-group">
+                <label for="time">Playing Time:</label>
+                <input type="text" id="time" required>
+            </div>
+            <div class="form-group">
+                <label for="difficulty">Difficulty:</label>
+                <select id="difficulty" required>
+                    <option value="Light">Light</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Medium-Heavy">Medium-Heavy</option>
+                    <option value="Heavy">Heavy</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="url">BGG URL:</label>
+                <input type="url" id="url">
+            </div>
+            <div class="form-group">
+                <label for="initial-rating">Initial Rating:</label>
+                <input type="range" id="initial-rating" min="0" max="10" value="0">
+                <span id="rating-display">0</span>
+            </div>
+            <button type="submit">Add Game</button>
+        </form>
+    </div>
+
 <!-- Test to see if code worked.
     <div id="test-results">
         <h2>Test Results</h2>

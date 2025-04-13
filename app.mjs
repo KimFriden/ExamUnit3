@@ -210,9 +210,47 @@ function setupFileImport() {
     });
 }
 
+function setupNewGameForm() {
+    const form = document.getElementById('add-game-form');
+    const ratingInput = document.getElementById('initial-rating');
+    const ratingDisplay = document.getElementById('rating-display');
+
+    ratingInput.addEventListener('input', () => {
+        ratingDisplay.textContent = ratingInput.value;
+    });
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const newGame = new Game({
+            title: document.getElementById('title').value,
+            designer: document.getElementById('designer').value,
+            artist: document.getElementById('artist').value,
+            publisher: document.getElementById('publisher').value,
+            year: parseInt(document.getElementById('year').value),
+            players: document.getElementById('players').value,
+            time: document.getElementById('time').value,
+            difficulty: document.getElementById('difficulty').value,
+            url: document.getElementById('url').value,
+            playCount: 0,
+            personalRating: parseInt(document.getElementById('initial-rating').value)
+        });
+        saveGame(newGame);
+
+        games.push(newGame);
+        displayGames();
+
+        form.reset();
+        ratingDisplay.textContent = '0';
+
+        alert(`Game "${newGame.title}" has been added!`);
+    });
+}
+
 function init() {
     loadGames();
     setupFileImport();
+    setupNewGameForm();
 }
 
 document.addEventListener('DOMContentLoaded', init);
