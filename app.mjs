@@ -1,9 +1,10 @@
 import Game from './models/Game.mjs';
 
 let games = [];
+let currentSortBy = 'title';
+let sortAscending = true;
 
 function saveGame(game) {
-
     const key = `game_${game.title.toLowerCase().replace(/\s+/g, '_')}`;
     localStorage.setItem(key, JSON.stringify(game));
     return key;
@@ -95,6 +96,7 @@ function renderGameRecord(game) {
                     <span class="rating-value">${game.personalRating}</span>
                 </div>
                 <button class="play-button" data-title="${game.title}">Record Play</button>
+                <button class="delete-button" data-title="${game.title}">Delete Game</button>
                 <p><a href="${game.url}" target="_blank">View on BoardGameGeek</a></p>
             </div>
         </div>
@@ -106,7 +108,20 @@ function renderGameRecord(game) {
     const playButton = gameElement.querySelector('.play-button');
     playButton.addEventListener('click', handlePlayRecord);
 
+    const deleteButton = gameElement.querySelector('.delete-button');
+    deleteButton.addEventListener('click', handleDeleteGame);
+
     return gameElement;
+}
+
+function deleteGame(gameTitle) {
+    const key = `game_${gameTitle.toLowerCase().replace(/\s+/g, '_')}`;
+    localStorage.removeItem(key);
+
+    const gameIndex = games.findIndex(g => g.title === gameTitle);
+    if (gameIndex !== -1) {
+        games.splice(gameIndex, 1);
+    }
 }
 
 function updateGame(gameTitle, updates) {
@@ -124,6 +139,17 @@ function updateGame(gameTitle, updates) {
     localStorage.setItem(key, JSON.stringify(updatedGame));
 
     return updatedGame;
+}
+
+function handleDeleteGame(event) {
+    const gameTitle = event.target.dataset.title;
+
+    if (confirm(`Are you sure you want to delete "${gameTitle}"?`)) {
+        deleteGame(gameTitle);
+
+        const gameElement = event.target.closest('.game-record');
+        gameElement.remove();
+    }
 }
 
 function handleRatingChange(event) {
@@ -158,7 +184,62 @@ function handlePlayRecord(event) {
     }
 }
 
+function sortGames() {
+    games.sort((a, b) => {
+        let valueA, valueB;
+
+        if (currentSortBy === 'players') {
+            valueA = parseInt(a.players.match(/\d+/)[0] || 0);
+            valueB = parseInt(b.players.match(/\d+/)[0] || 0);
+        }
+        else if (currentSortBy === 'difficulty') {
+            const difficultyMap = {
+                'Light': 1,
+                'Medium': 2,
+                'Medium-Heavy': 3,
+                'Heavy': 4
+            };
+            valueA = difficultyMap[a.difficulty] || 0;
+            valueB = difficultyMap[b.difficulty] || 0;
+        }
+        else {
+            valueA = a[currentSortBy];
+            valueB = b[currentSortBy];
+        }
+
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+            return sortAscending
+                ? valueA.localeCompare(valueB)
+                : valueB.localeCompare(valueA);
+        } else {
+            return sortAscending
+                ? valueA - valueB
+                : valueB - valueA;
+        }
+    });
+}
+
+function setupSorting() {
+    const sortBySelect = document.getElementById('sort-by');
+    const sortDirectionButton = document.getElementById('sort-direction');
+
+    sortBySelect.addEventListener('change', () => {
+        currentSortBy = sortBySelect.value;
+        sortGames();
+        displayGames();
+    });
+
+    sortDirectionButton.addEventListener('click', () => {
+        sortAscending = !sortAscending;
+        sortDirectionButton.textContent = sortAscending ? '↑' : '↓';
+        sortGames();
+        displayGames();
+    });
+}
+
 function displayGames() {
+    sortGames();
+
     let gamesContainer = document.getElementById('games-container');
 
     if (!gamesContainer) {
@@ -166,7 +247,6 @@ function displayGames() {
         gamesContainer.id = 'games-container';
         document.body.appendChild(gamesContainer);
     }
-
     gamesContainer.innerHTML = '';
 
     games.forEach(game => {
@@ -251,6 +331,7 @@ function init() {
     loadGames();
     setupFileImport();
     setupNewGameForm();
+    setupSorting();
 }
 
 document.addEventListener('DOMContentLoaded', init);
