@@ -1,5 +1,7 @@
 import Game from './models/Game.mjs';
 
+let games = [];
+
 function saveGame(game) {
 
     const key = `game_${game.title.toLowerCase().replace(/\s+/g, '_')}`;
@@ -57,7 +59,54 @@ function importGamesFromJSON(jsonString) {
     }
 }
 
-console.log("Game Storage loaded");
+function loadGames() {
+    games = getAllGames();
+    console.log(`Loaded ${games.length} games from localStorage`);
+}
+
+function setupFileImport() {
+    const importInput = document.getElementById('importSource');
+
+    importInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            try {
+                const jsonData = e.target.result;
+                const result = importGamesFromJSON(jsonData);
+
+                if (result.success) {
+                    loadGames();
+                    console.log(result.message);
+                } else {
+                    console.error(result.message);
+                }
+            } catch (error) {
+                console.error('Error processing file:', error);
+            }
+        };
+
+        reader.readAsText(file);
+    });
+}
+
+function init() {
+    loadGames();
+    setupFileImport();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+export {
+    saveGame,
+    getAllGames,
+    exportGamesAsJSON,
+    importGamesFromJSON,
+    games
+};
 
 //#region testing if code actually works 
 /*
@@ -125,9 +174,6 @@ function clearGameStorage() {
 }
 
 window.addEventListener('DOMContentLoaded', testLocalStorageFunctions); 
-*/
-//#endregion
-
 
 export {
     saveGame,
@@ -135,3 +181,5 @@ export {
     exportGamesAsJSON,
     importGamesFromJSON
 };
+*/
+//#endregion
