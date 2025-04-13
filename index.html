@@ -7,7 +7,32 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1>Game Record App</h1>
+<!-- Test to see if code worked.
+    <div id="test-results">
+        <h2>Test Results</h2>
+        <pre id="console-output"></pre>
+    </div>
 
+    <script>
+        const originalConsoleLog = console.log;
+        const consoleOutput = document.getElementById('console-output');
+
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+
+            const message = args.map(arg => {
+                if (typeof arg === 'object') {
+                    return JSON.stringify(arg, null, 2);
+                } else {
+                    return String(arg);
+                }
+            }).join(' ');
+
+            consoleOutput.textContent += message + '\n';
+        };
+    </script>
+-->
     <script type="module" src="app.mjs"></script>
 </body>
 </html>
