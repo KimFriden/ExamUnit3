@@ -59,9 +59,70 @@ function importGamesFromJSON(jsonString) {
     }
 }
 
+function renderGameRecord(game) {
+    const gameElement = document.createElement('div');
+    gameElement.className = 'game-record';
+    gameElement.dataset.title = game.title;
+
+    gameElement.innerHTML = `
+        <div class="game-header">
+            <h2>${game.title}</h2>
+            <div class="game-meta">
+                <span>${game.year}</span>
+                <span>⏱️ ${game.time}</span>
+                <span>👥 ${game.players}</span>
+                <span>📊 ${game.difficulty}</span>
+            </div>
+        </div>
+        <div class="game-info">
+            <div class="game-creators">
+                <p><strong>Designer:</strong> ${game.designer}</p>
+                <p><strong>Artist:</strong> ${game.artist}</p>
+                <p><strong>Publisher:</strong> ${game.publisher}</p>
+            </div>
+            <div class="game-stats">
+                <p><strong>Plays:</strong> ${game.playCount}</p>
+                <div class="rating-container">
+                    <label for="rating-${game.title.toLowerCase().replace(/\s+/g, '-')}">Rating:</label>
+                    <input
+                        type="range"
+                        id="rating-${game.title.toLowerCase().replace(/\s+/g, '-')}"
+                        min="0"
+                        max="10"
+                        value="${game.personalRating}"
+                        class="rating-slider">
+                    <span class="rating-value">${game.personalRating}</span>
+                </div>
+                <button class="play-button">Record Play</button>
+                <p><a href="${game.url}" target="_blank">View on BoardGameGeek</a></p>
+            </div>
+        </div>
+    `;
+
+    return gameElement;
+}
+
+function displayGames() {
+    let gamesContainer = document.getElementById('games-container');
+
+    if (!gamesContainer) {
+        gamesContainer = document.createElement('div');
+        gamesContainer.id = 'games-container';
+        document.body.appendChild(gamesContainer);
+    }
+
+    gamesContainer.innerHTML = '';
+
+    games.forEach(game => {
+        const gameElement = renderGameRecord(game);
+        gamesContainer.appendChild(gameElement);
+    });
+}
+
 function loadGames() {
     games = getAllGames();
     console.log(`Loaded ${games.length} games from localStorage`);
+    displayGames();
 }
 
 function setupFileImport() {
